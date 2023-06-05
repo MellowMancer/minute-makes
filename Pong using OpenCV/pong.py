@@ -6,7 +6,7 @@ frameWidth = 1080
 frameHeight = 9*frameWidth/16
 
 # Using Cascade Classifier to detect objects (Face) in the video stream
-faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
+faceCascade = cv2.CascadeClassifier("Pong using OpenCV\haarcascade_frontalface_alt.xml")
 
 # Capturing video from webcam
 cap = cv2.VideoCapture(0)
@@ -78,8 +78,11 @@ while True:
         cv2.rectangle (canvas, (0,int((2*y+h)/2)-l), (3, int((2*y+h)/2)+l), (255,255,255), 5)
 
         # Increment the points if the ball hits the racket, otherwise set to 0
-        if(m-3 <= 30) and ((n+30 >= int((2*y+h)/2)-l) and (n-30 <= int((2*y+h)/2)+l)) and flag == 0:
+        if(m-3 <= 30) and ((n+50 >= int((2*y+h)/2)-l) and (n-50 <= int((2*y+h)/2)+l)) and flag == 0:
             t = t+1
+            flag = 1 
+        elif(m-3 <= 30) and flag == 0:
+            t = 0
             flag = 1
         else:
             flag = 0
@@ -93,5 +96,5 @@ while True:
 
     # Rendering the frame
     cv2.imshow("Pong", canvas)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(3) & 0xFF == ord('q'):
         break
