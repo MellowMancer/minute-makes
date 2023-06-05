@@ -78,7 +78,7 @@ while True:
         cv2.rectangle (canvas, (0,int((2*y+h)/2)-l), (3, int((2*y+h)/2)+l), (255,255,255), 5)
 
         # Increment the points if the ball hits the racket, otherwise set to 0
-        if(m-3 <= 30) and ((n+50 >= int((2*y+h)/2)-l) and (n-50 <= int((2*y+h)/2)+l)) and flag == 0:
+        if(m-3 <= 30) and ((n+10 >= int((2*y+h)/2)-l) and (n-10 <= int((2*y+h)/2)+l)) and flag == 0:
             t = t+1
             flag = 1 
         elif(m-3 <= 30) and flag == 0:
