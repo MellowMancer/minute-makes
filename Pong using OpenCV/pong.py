@@ -1,15 +1,34 @@
 import cv2
 import numpy as np
 
+# Setting a custom frame width
 frameWidth = 1080
 frameHeight = 9*frameWidth/16
-handCascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
 
+# Using Cascade Classifier to detect objects (Face) in the video stream
+faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
+
+# Capturing video from webcam
 cap = cv2.VideoCapture(0)
+
+# Setting certain properties for the video capture
+#   3: frameWidth
+#   4: frameHeight
+#   5: frameRate
 cap.set(3, frameWidth)
 cap.set(4, frameHeight)
 cap.set(5, 30)
-cap.set(10, 10)
+
+# Setting initial parameters for the ball
+#   m: Current x-coordinate
+#   n: Current y-coordinate
+#   ux: Horizontal velocity
+#   uy: Vertical velocity
+#   t: Point Counter (Not Time)
+#   flagx, flagy and flag: Flags
+#   l: Half the length of the "racket"
+#   ax: Horizontal acceleration
+#   ay: Vertical acceleration
 m = 100
 n = 100
 ux = 100
@@ -21,15 +40,25 @@ flag = 0
 l = 120
 # ax = 2
 # ay = 2
+
+# while loop to make sure the frame is refreshed regularly
 while True:
     success, img = cap.read()
-    black = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
+    # Creating a canvas and initializing its colour to a shade of blue
+    canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
+    canvas[:] = (50, 30, 30)
+
+    # Flipping the image read by the webcam so all the movement is mirrored
     img = cv2.flip(img, 1)
-    cv2.normalize(img, img, 0, 255, cv2.NORM_MINMAX)
+
+    # Converting the image to greyscale for later use in face recognition
     blur = cv2.GaussianBlur(img,(5,5),0)
-    gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY) 
-    retval2,thresh1 = cv2.threshold(gray,70,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
-    hand = handCascade.detectMultiScale(gray, 1.1, 4)
+    grey = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
+
+    # Detecting all the faces in the image
+    face = faceCascade.detectMultiScale(grey, 1.1, 4)
+
+    # Specifying boundary conditions so that the ball stays in the canvas
     if((m+3 >= frameWidth - 30) or (m-3 <= 30)) and flagx == 0:
         ux = -ux
         flagx = 1
@@ -40,20 +69,29 @@ while True:
         flagy = 1
     else:
         flagy = 0
-    cv2.circle(black, (int(m), int(n)), 4, (255,255,255), 10)
-    for (x,y,w,h) in hand:
-        cv2.rectangle (black, (0,int((2*y+h)/2)-l), (0, int((2*y+h)/2)+l), (255,255,255), 5)
+
+    # Creating the ball and updating its position with each iteration
+    cv2.circle(canvas, (int(m), int(n)), 4, (255,255,255), 10)
+
+    # Used to create a "racket" for each face recognized
+    for (x,y,w,h) in face:
+        cv2.rectangle (canvas, (0,int((2*y+h)/2)-l), (3, int((2*y+h)/2)+l), (255,255,255), 5)
+
+        # Increment the points if the ball hits the racket, otherwise set to 0
         if(m-3 <= 30) and ((n+30 >= int((2*y+h)/2)-l) and (n-30 <= int((2*y+h)/2)+l)) and flag == 0:
             t = t+1
             flag = 1
         else:
-            # t = 0
             flag = 0
 
-    cv2.putText(black, str(t), (int(frameWidth/2), 100), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
+    # Displaying the points
+    cv2.putText(canvas, str(t), (int(frameWidth/2), 100), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
+
+    # Updating coordinates of ball
     m = m+ux
     n = n+uy
-    # cv2.imshow("bts", thresh1)
-    cv2.imshow("Result", black)
+
+    # Rendering the frame
+    cv2.imshow("Pong", canvas)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
