@@ -72,7 +72,7 @@ while True:
     # Creating the ball and updating its position with each iteration
     cv2.circle(canvas, (int(m), int(n)), 4, (255,255,255), 10)
     if(face == ()):
-        cv2.putText(canvas, "Face not detected: Point counter paused", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (200,200,200), 3, cv2.LINE_AA)
+        cv2.putText(canvas, "Face not detected: Point counter paused", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), 1, cv2.LINE_AA)
 
     # Used to create a "racket" for each face recognized
     for (x,y,w,h) in face:
@@ -97,5 +97,5 @@ while True:
 
     # Rendering the frame
     cv2.imshow("Pong", canvas)
-    if cv2.waitKey(3) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
