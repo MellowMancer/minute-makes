@@ -9,6 +9,7 @@ Welcome to this collection of all the small and tiny projects that I have made w
 This is a project which aims to introduce a new way to play Pong. With your face!
 Control the bar with face movements and look stupid as you bounce in your chair to keep your score up.
 
+Keybind for pausing the game: `p`
 Keybind for closing the window: `q`
 
 (NOTE: You might need to edit the path of the xml file called if it returns an error.)

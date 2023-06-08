@@ -10,6 +10,7 @@ faceCascade = cv2.CascadeClassifier("Pong using OpenCV\haarcascade_frontalface_a
 
 # Capturing video from webcam
 cap = cv2.VideoCapture(0)
+fps = cap.get(cv2.CAP_PROP_FPS)
 
 # Setting certain properties for the video capture
 #   3: frameWidth
@@ -17,7 +18,7 @@ cap = cv2.VideoCapture(0)
 #   5: frameRate
 cap.set(3, frameWidth)
 cap.set(4, frameHeight)
-cap.set(5, 30)
+cap.set(5, fps)
 
 # Setting initial parameters for the ball
 #   m: Current x-coordinate
@@ -37,10 +38,16 @@ t = 0
 flagx = 0
 flagy = 0
 flag = 0
+flagp = 0
 l = 120
 # ax = 2
 # ay = 2
 
+# Allowing the user to customise the parameters of the game
+update = input("Would you like to change the default settings for ball speed and bar length? (y/n): ")
+if(update=='y' or update=='yes'):
+    ux = int(input("Enter the ball speed (Default: 100): "))
+    l = int(input("Enter the length of the bar (Default: 120): "))
 # while loop to make sure the frame is refreshed regularly
 while True:
     success, img = cap.read()
@@ -86,12 +93,12 @@ while True:
         else:
             flag = 0
 
-    # Displaying the points
+    # Displaying the points and pausing the point counter if no face is detected
     if(face == ()):
         cv2.putText(canvas, "Face not detected: Point counter paused", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), 1, cv2.LINE_AA)
-        cv2.putText(canvas, str(t), (int(frameWidth/2), 100), cv2.FONT_HERSHEY_SIMPLEX, 3, (150,150,150), 4, cv2.LINE_AA)
+        cv2.putText(canvas, str(t), (int(frameWidth/2-40), 100), cv2.FONT_HERSHEY_SIMPLEX, 3, (150,150,150), 4, cv2.LINE_AA)
     else:
-        cv2.putText(canvas, str(t), (int(frameWidth/2), 100), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
+        cv2.putText(canvas, str(t), (int(frameWidth/2-40), 100), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
 
     # Updating coordinates of ball
     m = m+ux
@@ -99,5 +106,14 @@ while True:
 
     # Rendering the frame
     cv2.imshow("Pong", canvas)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+
+    # Game is paused if 'p' is pressed and it terminates if 'q' is pressed
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('p'):
+        canvas1 = canvas
+        cv2.putText(canvas1, "PAUSED", (int(340), int(frameHeight/2)), cv2.FONT_HERSHEY_SIMPLEX, 3, (150,150,150), 4, cv2.LINE_AA)
+        cv2.imshow("Pong", canvas1)
+        while(cv2.waitKey(1) & 0xFF != ord('p')):
+            temp = 1
+    elif key == ord('q'):
         break
