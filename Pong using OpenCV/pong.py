@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import math
 
 def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
 
@@ -184,8 +185,11 @@ def inp(var, text):
     while(True):
         canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
         canvas[:] = (50, 30, 30)
-        digits = len(str(var))+1
-        cv2.putText(canvas, text, (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+        digits = int(math.log10(n))+2
+        cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+        cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+        cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+        cv2.putText(canvas, text, (20,200), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
         cv2.putText(canvas, str(var1), (int(frameWidth/2)-20*digits,int(frameHeight/2)-10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
         key1 = cv2.waitKey(1) & 0xFF
         if key1 > 47 and key1 < 58: 
@@ -194,6 +198,8 @@ def inp(var, text):
             var1 = int(var1/10)
         elif key1 == 32: 
             if var1 != 0:
+                if var1 > 300:
+                    var1 = 300
                 var = var1
             break
         # Rendering the frame
@@ -206,21 +212,24 @@ def opt(ux, l):
     while True:
         canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
         canvas[:] = (50, 30, 30)
+        cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+        cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+        cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         
         key = cv2.waitKey(1) & 0xFF
 
         if cursor == 0:
             cv2.putText(canvas, "Configure Speed", (20,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
             cv2.putText(canvas, "Configure Bar Length", (20,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-            cv2.putText(canvas, "Quit", (20,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Quit", (20,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
         elif cursor == 1:
             cv2.putText(canvas, "Configure Speed", (20,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
             cv2.putText(canvas, "Configure Bar Length", (20,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
-            cv2.putText(canvas, "Quit", (20,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Quit", (20,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
         elif cursor == 2:
             cv2.putText(canvas, "Configure Speed", (20,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
             cv2.putText(canvas, "Configure Bar Length", (20,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-            cv2.putText(canvas, "Quit", (20,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Quit", (20,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3, cv2.LINE_AA)
   
         
         if key == ord('w') and cursor != 0:
@@ -280,6 +289,9 @@ while True:
     canvas[:] = (50, 30, 30)
     
     cv2.putText(canvas, "PONG", (int(370), int(frameHeight/2)-80), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
+    cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+    cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+    cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
     options = ["Rally", "1v1"]
     key = cv2.waitKey(1) & 0xFF
 
