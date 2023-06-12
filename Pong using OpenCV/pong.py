@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import math
+import random
 
 def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
 
@@ -15,10 +16,11 @@ def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
         # while loop to make sure the frame is refreshed regularly
     while True:
         success, img = cap.read()
+        img = img[0:int(frameHeight), 0:int(frameWidth)]
         # Creating a canvas and initializing its colour to a shade of blue
         canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
         canvas[:] = (50, 30, 30)
-        # canvas = img
+        canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
 
         # Flipping the image read by the webcam so all the movement is mirrored
         img = cv2.flip(img, 1)
@@ -67,7 +69,6 @@ def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
         # Updating coordinates of ball
         m = m+ux
         n = n+uy
-
         # Rendering the frame
         cv2.imshow("Pong", canvas)
 
@@ -96,9 +97,11 @@ def local_multi_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
         # while loop to make sure the frame is refreshed regularly
     while True:
         success, img = cap.read()
+        img = img[0:int(frameHeight), 0:int(frameWidth)]
         # Creating a canvas and initializing its colour to a shade of blue
         canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
         canvas[:] = (50, 30, 30)
+        canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
         # canvas = img
 
         # Flipping the image read by the webcam so all the movement is mirrored
