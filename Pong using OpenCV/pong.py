@@ -1,29 +1,22 @@
 import cv2
 import numpy as np
 import math
-import random
 
-def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
+def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
 
-    # Setting certain properties for the video capture
-    #   3: frameWidth
-    #   4: frameHeight
-    #   5: frameRate
-    cap.set(3, frameWidth)
-    cap.set(4, frameHeight)
-    cap.set(5, fps)
     t = 0
         # while loop to make sure the frame is refreshed regularly
     while True:
         success, img = cap.read()
         img = img[0:int(frameHeight), 0:int(frameWidth)]
+        
+        # Flipping the image read by the webcam so all the movement is mirrored
+        img = cv2.flip(img, 1)
+
         # Creating a canvas and initializing its colour to a shade of blue
         canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
         canvas[:] = (50, 30, 30)
         canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
-
-        # Flipping the image read by the webcam so all the movement is mirrored
-        img = cv2.flip(img, 1)
 
         # Converting the image to greyscale for later use in face recognition
         blur = cv2.GaussianBlur(img,(5,5),0)
@@ -60,7 +53,7 @@ def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
                 flag = 0
 
         # Displaying the points and pausing the point counter if no face is detected
-        if(face == ()):
+        if(len(face)<1):
             cv2.putText(canvas, "Face not detected: Point counter paused", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), 1, cv2.LINE_AA)
             cv2.putText(canvas, str(t), (int(frameWidth/2-40), 100), cv2.FONT_HERSHEY_SIMPLEX, 3, (150,150,150), 4, cv2.LINE_AA)
         else:
@@ -83,29 +76,21 @@ def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
         elif key == ord('q'):
             break
 
-def local_multi_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
+def local_multi_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
 
-    # Setting certain properties for the video capture
-    #   3: frameWidth
-    #   4: frameHeight
-    #   5: frameRate
-    cap.set(3, frameWidth)
-    cap.set(4, frameHeight)
-    cap.set(5, fps)
     t1 = 0
     t2 = 0
         # while loop to make sure the frame is refreshed regularly
     while True:
         success, img = cap.read()
         img = img[0:int(frameHeight), 0:int(frameWidth)]
+        # Flipping the image read by the webcam so all the movement is mirrored
+        img = cv2.flip(img, 1)        
+
         # Creating a canvas and initializing its colour to a shade of blue
         canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
         canvas[:] = (50, 30, 30)
         canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
-        # canvas = img
-
-        # Flipping the image read by the webcam so all the movement is mirrored
-        img = cv2.flip(img, 1)
 
         # Converting the image to greyscale for later use in face recognition
         blur = cv2.GaussianBlur(img,(5,5),0)
@@ -183,12 +168,22 @@ def local_multi_player(m, n, ux, uy, flagx, flagy, flag, l, cap, fps):
         elif key == ord('q'):
             break
 
-def inp(var, text):
+def inp(var, text, cap):
     var1 = 0
-    while(True):
+    
+    while True:
+        success, img = cap.read()
+        img = img[0:int(frameHeight), 0:int(frameWidth)]
+        
+        # Flipping the image read by the webcam so all the movement is mirrored
+        img = cv2.flip(img, 1)
+
+        # Creating a canvas and initializing its colour to a shade of blue
         canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
         canvas[:] = (50, 30, 30)
-        digits = int(math.log10(n))+2
+        canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
+
+        digits = int(math.log10(var1+1))+1
         cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
@@ -209,12 +204,22 @@ def inp(var, text):
         cv2.imshow("Pong", canvas)
     return var
 
-def opt(ux, l):
+def opt(ux, l, cap):
     #Options Screen
     cursor = 0
+        
     while True:
+        success, img = cap.read()
+        img = img[0:int(frameHeight), 0:int(frameWidth)]
+        
+        # Flipping the image read by the webcam so all the movement is mirrored
+        img = cv2.flip(img, 1)
+
+        # Creating a canvas and initializing its colour to a shade of blue
         canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
         canvas[:] = (50, 30, 30)
+        canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
+
         cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
@@ -242,10 +247,10 @@ def opt(ux, l):
         elif key == 32:
             if cursor == 0:
                 text = "Input the ball speed (Current: "+str(ux)+")"
-                ux = inp(ux, text)
+                ux = inp(ux, text, cap)
             elif cursor == 1:
                 text = "Input the length of the bar (Current: "+str(l)+")"
-                l = inp(l, text)
+                l = inp(l, text, cap)
             elif cursor == 2:
                 break
                 
@@ -262,7 +267,15 @@ faceCascade = cv2.CascadeClassifier("Pong using OpenCV\haarcascade_frontalface_a
 
 # Capturing video from webcam
 cap = cv2.VideoCapture(0)
-fps = cap.get(cv2.CAP_PROP_FPS)
+fps = 30
+# Setting certain properties for the video capture
+#   3: frameWidth
+#   4: frameHeight
+#   5: frameRate
+cap.set(3, frameWidth)
+cap.set(4, frameHeight)
+cap.set(5, fps)
+    
 
 # Setting initial parameters for the ball
 #   m: Current x-coordinate
@@ -287,11 +300,20 @@ l = 120
 cursor = 0
 
 #Title Screen
+    
 while True:
+    success, img = cap.read()
+    img = img[0:int(frameHeight), 0:int(frameWidth)]
+    
+    # Flipping the image read by the webcam so all the movement is mirrored
+    img = cv2.flip(img, 1)
+
+    # Creating a canvas and initializing its colour to a shade of blue
     canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
     canvas[:] = (50, 30, 30)
-    
-    cv2.putText(canvas, "PONG", (int(370), int(frameHeight/2)-80), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
+    canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
+
+    cv2.putText(canvas, "PONG", (int(390), int(frameHeight/2)-80), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
     cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
     cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
     cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
@@ -331,11 +353,11 @@ while True:
             cursor += 1
     elif key == 32:
         if cursor == 0:
-            single_player(m,n,ux,uy,flagx,flagy,flag,l, cap, fps)
+            single_player(m,n,ux,uy,flagx,flagy,flag,l, cap)
         elif cursor == 1:
-            local_multi_player(m,n,ux,uy,flagx,flagy,flag,l, cap, fps)
+            local_multi_player(m,n,ux,uy,flagx,flagy,flag,l, cap)
         elif cursor == 2:
-            ux, l = opt(ux, l)
+            ux, l = opt(ux, l, cap)
         elif cursor == 3:
             break
     # Rendering the frame
