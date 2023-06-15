@@ -2,8 +2,10 @@ import cv2
 import numpy as np
 import math
 
+#Single Player Screen
 def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
 
+    # Point counter for the player
     t = 0
         # while loop to make sure the frame is refreshed regularly
     while True:
@@ -76,11 +78,13 @@ def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
         elif key == ord('q'):
             break
 
+#Local Multiplayer Screen
 def local_multi_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
 
+    # Point counters for the respective players
     t1 = 0
     t2 = 0
-        # while loop to make sure the frame is refreshed regularly
+    # while loop to make sure the frame is refreshed regularly
     while True:
         success, img = cap.read()
         img = img[0:int(frameHeight), 0:int(frameWidth)]
@@ -168,7 +172,9 @@ def local_multi_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
         elif key == ord('q'):
             break
 
+#Input Screen
 def inp(var, text, cap):
+    # var1 is the variable in which we shall store the input
     var1 = 0
     
     while True:
@@ -183,17 +189,28 @@ def inp(var, text, cap):
         canvas[:] = (50, 30, 30)
         canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
 
-        digits = int(math.log10(var1+1))+1
+        # Calculating the number of digits in the input
+        digits = int(math.log10(var1+0.5))+1
+
+        # Displaying the controls on the top left of the screen
         cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+
+        # Displaying the input currently entered
         cv2.putText(canvas, text, (20,200), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
         cv2.putText(canvas, str(var1), (int(frameWidth/2)-20*digits,int(frameHeight/2)-10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+
+        # key1 is used to record keyboard inputs
         key1 = cv2.waitKey(1) & 0xFF
+
+        # Checks whether keyboard input is a number or not
         if key1 > 47 and key1 < 58: 
             var1 = var1*10+key1-48
+        # Checks for the keyboard input for backspace
         elif key1 == 8:
             var1 = int(var1/10)
+        # Confirm the input if spacebar is pressed
         elif key1 == 32: 
             if var1 != 0:
                 if var1 > 300:
@@ -204,8 +221,9 @@ def inp(var, text, cap):
         cv2.imshow("Pong", canvas)
     return var
 
+#Options Screen
 def opt(ux, l, cap):
-    #Options Screen
+
     cursor = 0
         
     while True:
@@ -220,12 +238,15 @@ def opt(ux, l, cap):
         canvas[:] = (50, 30, 30)
         canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
 
+        # Displaying the controls on the top left
         cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         
+        # This variable will be used to record keyboard inputs
         key = cv2.waitKey(1) & 0xFF
 
+        # Highlight the currently selected option
         if cursor == 0:
             cv2.putText(canvas, "Configure Speed", (20,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
             cv2.putText(canvas, "Configure Bar Length", (20,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
@@ -239,11 +260,13 @@ def opt(ux, l, cap):
             cv2.putText(canvas, "Configure Bar Length", (20,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
             cv2.putText(canvas, "Quit", (20,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 3, cv2.LINE_AA)
   
-        
+        # If 'w' is pressed, cursor goes up
         if key == ord('w') and cursor != 0:
             cursor -= 1
-        if key == ord('s') and cursor != 2:
+        # If 's' is pressed, cursor goes down
+        elif key == ord('s') and cursor != 2:
             cursor += 1
+        # If spacebar is pressed, current option is selected
         elif key == 32:
             if cursor == 0:
                 text = "Input the ball speed (Current: "+str(ux)+")"
@@ -258,10 +281,13 @@ def opt(ux, l, cap):
         cv2.imshow("Pong", canvas)
     return ux, l
 
+#Title Screen
 def main():
+
     # Capturing video from webcam
     cap = cv2.VideoCapture(0)
     fps = 30
+
     # Setting certain properties for the video capture
     #   3: frameWidth
     #   4: frameHeight
@@ -291,8 +317,6 @@ def main():
     # ax = 2
     # ay = 2
     cursor = 0
-
-    #Title Screen
         
     while True:
         success, img = cap.read()
@@ -306,13 +330,16 @@ def main():
         canvas[:] = (50, 30, 30)
         canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
 
+        # Creating the elements of the title screen
         cv2.putText(canvas, "PONG", (int(390), int(frameHeight/2)-80), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
         cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
         cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
-        options = ["Rally", "1v1"]
+
+        # This variable will be used to record keyboard inputs
         key = cv2.waitKey(1) & 0xFF
 
+        # Highlight the currently selected option
         if cursor == 0:
             cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
             cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
@@ -334,16 +361,17 @@ def main():
             cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
             cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
         
+        # If 'w' is pressed, cursor goes up
         if key == ord('w'):
             if cursor != 0:
-                # cv2.rectangle(canvas, (850,int(frameHeight/2)+cursor*70), (frameWidth, int(frameHeight/2)+(cursor-1)*70), (80, 60, 60), 5)
-                # cv2.floodFill(canvas, (880, None, int(frameHeight/2)+cursor*70+50), (80, 60, 60))
                 cursor -= 1
+
+        # If 's' is pressed, cursor goes down        
         if key == ord('s'):
             if cursor != 3:
-                # cv2.rectangle(canvas, (850,int(frameHeight/2)+cursor+1*70), (frameWidth, int(frameHeight/2)+(cursor+2)*70), (80, 60, 60), 5)
-                # cv2.floodFill(canvas, (880, None, int(frameHeight/2)+(cursor+1)*70+50), (80, 60, 60))
                 cursor += 1
+
+        # If 'spacebar' is pressed, current option is selected
         elif key == 32:
             if cursor == 0:
                 single_player(m,n,ux,uy,flagx,flagy,flag,l, cap)
@@ -355,7 +383,6 @@ def main():
                 break
         # Rendering the frame
         cv2.imshow("Pong", canvas)
-
 
 # Setting a custom frame width
 frameWidth = 1080
