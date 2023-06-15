@@ -258,6 +258,105 @@ def opt(ux, l, cap):
         cv2.imshow("Pong", canvas)
     return ux, l
 
+def main():
+    # Capturing video from webcam
+    cap = cv2.VideoCapture(0)
+    fps = 30
+    # Setting certain properties for the video capture
+    #   3: frameWidth
+    #   4: frameHeight
+    #   5: frameRate
+    cap.set(3, frameWidth)
+    cap.set(4, frameHeight)
+    cap.set(5, fps)
+        
+    # Setting initial parameters for the ball
+    #   m: Current x-coordinate
+    #   n: Current y-coordinate
+    #   ux: Horizontal velocity
+    #   uy: Vertical velocity
+    #   t: Point Counter (Not Time)
+    #   flagx, flagy and flag: Flags
+    #   l: Half the length of the "racket"
+    #   ax: Horizontal acceleration
+    #   ay: Vertical acceleration
+    m = 100
+    n = 100
+    ux = 100
+    uy = 50
+    flagx = 0
+    flagy = 0
+    flag = 0
+    l = 120
+    # ax = 2
+    # ay = 2
+    cursor = 0
+
+    #Title Screen
+        
+    while True:
+        success, img = cap.read()
+        img = img[0:int(frameHeight), 0:int(frameWidth)]
+        
+        # Flipping the image read by the webcam so all the movement is mirrored
+        img = cv2.flip(img, 1)
+
+        # Creating a canvas and initializing its colour to a shade of blue
+        canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
+        canvas[:] = (50, 30, 30)
+        canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
+
+        cv2.putText(canvas, "PONG", (int(390), int(frameHeight/2)-80), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
+        cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+        cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+        cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
+        options = ["Rally", "1v1"]
+        key = cv2.waitKey(1) & 0xFF
+
+        if cursor == 0:
+            cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+        elif cursor == 1:
+            cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+        elif cursor == 2:
+            cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (80,60,60), 3, cv2.LINE_AA)        
+        elif cursor == 3:
+            cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
+            cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
+        
+        if key == ord('w'):
+            if cursor != 0:
+                # cv2.rectangle(canvas, (850,int(frameHeight/2)+cursor*70), (frameWidth, int(frameHeight/2)+(cursor-1)*70), (80, 60, 60), 5)
+                # cv2.floodFill(canvas, (880, None, int(frameHeight/2)+cursor*70+50), (80, 60, 60))
+                cursor -= 1
+        if key == ord('s'):
+            if cursor != 3:
+                # cv2.rectangle(canvas, (850,int(frameHeight/2)+cursor+1*70), (frameWidth, int(frameHeight/2)+(cursor+2)*70), (80, 60, 60), 5)
+                # cv2.floodFill(canvas, (880, None, int(frameHeight/2)+(cursor+1)*70+50), (80, 60, 60))
+                cursor += 1
+        elif key == 32:
+            if cursor == 0:
+                single_player(m,n,ux,uy,flagx,flagy,flag,l, cap)
+            elif cursor == 1:
+                local_multi_player(m,n,ux,uy,flagx,flagy,flag,l, cap)
+            elif cursor == 2:
+                ux, l = opt(ux, l, cap)
+            elif cursor == 3:
+                break
+        # Rendering the frame
+        cv2.imshow("Pong", canvas)
+
+
 # Setting a custom frame width
 frameWidth = 1080
 frameHeight = 9*frameWidth/16
@@ -265,106 +364,4 @@ frameHeight = 9*frameWidth/16
 # Using Cascade Classifier to detect objects (Face) in the video stream
 faceCascade = cv2.CascadeClassifier("Pong using OpenCV\haarcascade_frontalface_alt.xml")
 
-# Capturing video from webcam
-cap = cv2.VideoCapture(0)
-fps = 30
-# Setting certain properties for the video capture
-#   3: frameWidth
-#   4: frameHeight
-#   5: frameRate
-cap.set(3, frameWidth)
-cap.set(4, frameHeight)
-cap.set(5, fps)
-    
-
-# Setting initial parameters for the ball
-#   m: Current x-coordinate
-#   n: Current y-coordinate
-#   ux: Horizontal velocity
-#   uy: Vertical velocity
-#   t: Point Counter (Not Time)
-#   flagx, flagy and flag: Flags
-#   l: Half the length of the "racket"
-#   ax: Horizontal acceleration
-#   ay: Vertical acceleration
-m = 100
-n = 100
-ux = 100
-uy = 50
-flagx = 0
-flagy = 0
-flag = 0
-l = 120
-# ax = 2
-# ay = 2
-cursor = 0
-
-#Title Screen
-    
-while True:
-    success, img = cap.read()
-    img = img[0:int(frameHeight), 0:int(frameWidth)]
-    
-    # Flipping the image read by the webcam so all the movement is mirrored
-    img = cv2.flip(img, 1)
-
-    # Creating a canvas and initializing its colour to a shade of blue
-    canvas = np.zeros((int(frameHeight),int(frameWidth),3), np.uint8)
-    canvas[:] = (50, 30, 30)
-    canvas = cv2.addWeighted(canvas,0.8,img,0.2,0,canvas)
-
-    cv2.putText(canvas, "PONG", (int(390), int(frameHeight/2)-80), cv2.FONT_HERSHEY_SIMPLEX, 3, (255,255,255), 4, cv2.LINE_AA)
-    cv2.putText(canvas, "Spacebar: Confirm", (20,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
-    cv2.putText(canvas, "W: Up", (20,85), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
-    cv2.putText(canvas, "S: Down", (20,120), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,60,60), 1, cv2.LINE_AA)
-    options = ["Rally", "1v1"]
-    key = cv2.waitKey(1) & 0xFF
-
-    if cursor == 0:
-        cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-    elif cursor == 1:
-        cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-    elif cursor == 2:
-        cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (80,60,60), 3, cv2.LINE_AA)        
-    elif cursor == 3:
-        cv2.putText(canvas, "Rally", (800,int(frameHeight/2)+10), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "1v1", (800,int(frameHeight/2)+80), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "Options", (800,int(frameHeight/2)+150), cv2.FONT_HERSHEY_SIMPLEX, 2, (80, 60, 60), 3, cv2.LINE_AA)
-        cv2.putText(canvas, "Quit", (800,int(frameHeight/2)+220), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3, cv2.LINE_AA)
-    
-    if key == ord('w'):
-        if cursor != 0:
-            # cv2.rectangle(canvas, (850,int(frameHeight/2)+cursor*70), (frameWidth, int(frameHeight/2)+(cursor-1)*70), (80, 60, 60), 5)
-            # cv2.floodFill(canvas, (880, None, int(frameHeight/2)+cursor*70+50), (80, 60, 60))
-            cursor -= 1
-    if key == ord('s'):
-        if cursor != 3:
-            # cv2.rectangle(canvas, (850,int(frameHeight/2)+cursor+1*70), (frameWidth, int(frameHeight/2)+(cursor+2)*70), (80, 60, 60), 5)
-            # cv2.floodFill(canvas, (880, None, int(frameHeight/2)+(cursor+1)*70+50), (80, 60, 60))
-            cursor += 1
-    elif key == 32:
-        if cursor == 0:
-            single_player(m,n,ux,uy,flagx,flagy,flag,l, cap)
-        elif cursor == 1:
-            local_multi_player(m,n,ux,uy,flagx,flagy,flag,l, cap)
-        elif cursor == 2:
-            ux, l = opt(ux, l, cap)
-        elif cursor == 3:
-            break
-    # Rendering the frame
-    cv2.imshow("Pong", canvas)
-
-# Allowing the user to customise the parameters of the game
-# update = input("Would you like to change the default settings for ball speed and bar length? (y/n): ")
-# if(update=='y' or update=='yes'):
-#     ux = int(input("Enter the ball speed (Default: 100): "))
-#     l = int(input("Enter the length of the bar (Default: 120): "))
+main()
