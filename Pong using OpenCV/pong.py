@@ -273,6 +273,7 @@ def opt(ux, l, cap):
             if cursor == 0:
                 text = "Input the ball speed (Current: "+str(ux)+")"
                 ux = inp(ux, text, cap)
+                uy = int(ux/2)
             elif cursor == 1:
                 text = "Input the length of the bar (Current: "+str(l)+")"
                 l = inp(l, text, cap)
@@ -281,7 +282,7 @@ def opt(ux, l, cap):
                 
         # Rendering the frame
         cv2.imshow("Pong", canvas)
-    return ux, l
+    return ux, uy, l
 
 #Title Screen
 def main():
@@ -310,8 +311,8 @@ def main():
     #   ay: Vertical acceleration
     m = 100
     n = 100
-    ux = 120
-    uy = int(ux/3+50)
+    ux = 50
+    uy = int(ux/2)
     flagx = 0
     flagy = 0
     flag = 0
@@ -380,7 +381,7 @@ def main():
             elif cursor == 1:
                 local_multi_player(m,n,ux,uy,flagx,flagy,flag,l, cap)
             elif cursor == 2:
-                ux, l = opt(ux, l, cap)
+                ux, uy, l = opt(ux, l, cap)
             elif cursor == 3:
                 break
         # Rendering the frame
