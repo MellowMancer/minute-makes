@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import mediapipe as mp
 import math
+import random
 
 #Single Player Screen
 def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
@@ -26,16 +27,13 @@ def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
         cy = -500
         # Draw landmarks on the image
         if results.multi_hand_landmarks:
-            for handLms in results.multi_hand_landmarks:
-                for id, lm in enumerate(handLms.landmark):
-                    if(id == 9):
-                        h = img.shape[0]
+            center = results.multi_hand_landmarks[0].landmark[9]
 
-                        # Finding the coordinates of each landmark
-                        cy = int(lm.y * h)
+            # Finding the coordinates of each landmark
+            cy = int(center.y * img.shape[0])
 
-                        # Drawing the landmark connections
-                        cv2.rectangle (canvas, (0,int(cy-l)), (3, int(cy+l)), (255,255,255), 5)
+            # Drawing the landmark connections
+            cv2.rectangle (canvas, (0,int(cy-l)), (3, int(cy+l)), (255,255,255), 5)
 
         # Increment the points if the ball hits the racket, otherwise set to 0
         if(m-3 <= 30) and ((n+20 >= int(cy-l)) and (n-20 <= int(cy+l)) )and flag == 0:
@@ -50,6 +48,7 @@ def single_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
         # Specifying boundary conditions so that the ball stays in the canvas
         if((m+3 >= frameWidth - 30) or (m-3 <= 30)) and flagx == 0:
             ux = -ux
+            uy += random.randint(-10, 10)
             flagx = 1
         else:
             flagx = 0
@@ -107,20 +106,20 @@ def local_multi_player(m, n, ux, uy, flagx, flagy, flag, l, cap):
         # Draw landmarks on the image
         if results.multi_hand_landmarks:
             for handLms in results.multi_hand_landmarks:
-                for id, lm in enumerate(handLms.landmark):
-                    if(id == 9):
-                        h, w, c = img.shape
+                center = handLms.landmark[9]
+                if(id == 9):
+                    h, w, c = img.shape
 
-                        # Finding the coordinates of each landmark
-                        cx, cy =int(lm.x *w), int(lm.y * h)
+                    # Finding the coordinates of each landmark
+                    cx, cy =int(center.x *w), int(center.y * h)
 
-                        # Drawing the landmark connections
-                        if cx <= int(frameWidth//2):
-                            cy1 = cy
-                            cv2.rectangle (canvas, (0,int(cy-l)), (3, int(cy+l)), (255,255,255), 5)
-                        elif cx > int(frameWidth//2):
-                            cy2 = cy
-                            cv2.rectangle (canvas, (frameWidth,int(cy-l)), (frameWidth-3, int(cy+l)), (255,255,255), 5)
+                    # Drawing the landmark connections
+                    if cx <= int(frameWidth//2):
+                        cy1 = cy
+                        cv2.rectangle (canvas, (0,int(cy-l)), (3, int(cy+l)), (255,255,255), 5)
+                    elif cx > int(frameWidth//2):
+                        cy2 = cy
+                        cv2.rectangle (canvas, (frameWidth,int(cy-l)), (frameWidth-3, int(cy+l)), (255,255,255), 5)
     
         # Increment the points of other player if the ball misses
         if(m+3 >= frameWidth-30) and ((n+30 >= int(cy2-l)) and (n-30 <= int(cy2+l))) and flag == 0:
@@ -396,6 +395,6 @@ frameHeight = 9*frameWidth/16
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
-hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.3, min_tracking_confidence=0.3)
+hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.3)
 
 main()
